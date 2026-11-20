@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <script src="https://maps.googleapis.com/maps/api/js?key"></script>
+  </head>
+
+  <body>
+    <script>
+      var markerIcon = {
+        url: "image/mark.png",
+        scaledSize: new google.maps.Size(40, 40)
+      };
+
+      function MyPos() {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(CurPosition, ErrorCallback);
+        } else {
+          document.getElementById("result").innerHTML =
+            "이 브라우저는 위치 정보를 지원하지 않습니다";
+        }
+      }
+
+      function CurPosition(position) {
+        var lat = position.coords.latitude;
+        var lng = position.coords.longitude;
+        document.getElementById("result").innerHTML =
+          "위도: " + lat + "<br>경도: " + lng;
+
+        var latlng = new google.maps.LatLng(lat, lng);
+
+        var options = {
+          zoom: 15,
+          center: latlng,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+
+        var map = new google.maps.Map(document.getElementById("map"), options);
+        var marker = new google.maps.Marker({
+          map: map,
+          icon: markerIcon,
+          title: "현재 위치",
+          position: latlng
+        });
+      }
+
+      function ErrorCallback(error) {
+        var result = document.getElementById("result");
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            result.innerHTML = "현재 위치 정보에 대한 권한이 없습니다";
+            break;
+          case error.POSITION_UNAVAILABLE:
+            result.innerHTML = "현재 위치 정보를 구할 수 없습니다";
+            break;
+          case error.TIMEOUT:
+            result.innerHTML = "위치 정보 요청 시간이 초과되었습니다";
+            break;
+          default:
+            result.innerHTML = "알 수 없는 오류가 발생했습니다";
+        }
+      }
+    </script>
+
+    <button onclick="MyPos()" type="button">현재 나의 위치</button>
+    <div id="result"></div>
+    <div id="map" style="width: 500px; height: 500px"></div>
+  </body>
+</html>
